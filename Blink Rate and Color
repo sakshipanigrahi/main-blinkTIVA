@@ -1,0 +1,80 @@
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+
+int main(void)
+{
+    SYSCTL_RCGC2_R |= 0x00000020;
+    GPIO_PORTF_LOCK_R = 0x4C4F434B;
+    GPIO_PORTF_CR_R = 0x01;
+    GPIO_PORTF_DIR_R = 0x0E;
+    GPIO_PORTF_PUR_R = 0x11;
+    GPIO_PORTF_DEN_R = 0x1F;
+
+    int colors[4] = {0x02, 0x08, 0x04, 0x0E};  /* Red, Green, Blue, White */
+    int rates[3] = {1000, 500, 250};             /* Slow, Medium, Fast */
+    int colorIndex = 0;
+    int rateIndex = 0;
+    int sw1 = 1;    /* SW1 not pressed */
+    int sw2 = 1;    /* SW2 not pressed */
+    int i, j;
+    int delayLimit;
+
+    while (1)
+    {
+        GPIO_PORTF_DATA_R = colors[colorIndex];   /* LED on */
+
+        delayLimit = rates[rateIndex];   /* freeze the wait time for this pass */
+        for (i = 0; i < delayLimit; i++)
+        {
+            if ((GPIO_PORTF_DATA_R & 0x10) == 0 && sw1 != 0)
+            {
+                rateIndex = rateIndex + 1;
+                if (rateIndex == 3)
+                {
+                    rateIndex = 0;
+                }
+            }
+            if ((GPIO_PORTF_DATA_R & 0x01) == 0 && sw2 != 0)
+            {
+                colorIndex = colorIndex + 1;
+                if (colorIndex == 4)
+                {
+                    colorIndex = 0;
+                }
+            }
+            sw1 = GPIO_PORTF_DATA_R & 0x10;
+            sw2 = GPIO_PORTF_DATA_R & 0x01;
+
+            GPIO_PORTF_DATA_R = colors[colorIndex];  /* keep color updated live */
+
+            for (j = 0; j < 3180; j++);
+        }
+
+        GPIO_PORTF_DATA_R = 0x00; /* LED off */
+
+        delayLimit = rates[rateIndex];
+        for (i = 0; i < delayLimit; i++)
+        {
+            if ((GPIO_PORTF_DATA_R & 0x10) == 0 && sw1 != 0)
+            {
+                rateIndex = rateIndex + 1;
+                if (rateIndex == 3)
+                {
+                    rateIndex = 0;
+                }
+            }
+            if ((GPIO_PORTF_DATA_R & 0x01) == 0 && sw2 != 0)
+            {
+                colorIndex = colorIndex + 1;
+                if (colorIndex == 4)
+                {
+                    colorIndex = 0;
+                }
+            }
+            sw1 = GPIO_PORTF_DATA_R & 0x10;
+            sw2 = GPIO_PORTF_DATA_R & 0x01;
+
+            for (j = 0; j < 3180; j++);
+        }
+    }
+}
