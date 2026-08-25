@@ -1,0 +1,32 @@
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+int main(void)
+{
+    SYSCTL_RCGC2_R |= 0x00000020;    /* enable clock to GPIOF */
+
+    GPIO_PORTF_LOCK_R = 0x4C4F434B;  /* unlock PF0 (NMI pin) */
+    GPIO_PORTF_CR_R   = 0x01;        /* allow changes to PF0 */
+
+    GPIO_PORTF_DIR_R = 0x0E;          /* PF1,PF2,PF3 = output (LEDs) */
+                                       /* PF0, PF4 = input (switches) */
+    GPIO_PORTF_PUR_R = 0x11;          /* pull-ups on PF0 and PF4 */
+    GPIO_PORTF_DEN_R = 0x1F;          /* digital enable PF0-PF4 */
+
+    while(1) {
+        int sw1 = (GPIO_PORTF_DATA_R & 0x10) != 0;   /* SW1 pressed? */
+        int sw2 = (GPIO_PORTF_DATA_R & 0x01) != 0;   /* SW2 pressed? */
+
+        if (sw1==0 && sw2==0) {
+            GPIO_PORTF_DATA_R = 0x0E;   /* both -> White */
+        }
+        else if (sw1==0 && sw2!=0) {
+            GPIO_PORTF_DATA_R = 0x04;   /* SW1 only -> Blue */
+        }
+        else if (sw2==0 && sw1!=0) {
+            GPIO_PORTF_DATA_R = 0x08;   /* SW2 only -> Green */
+        }
+        else {
+            GPIO_PORTF_DATA_R = 0x02;   /* neither -> Red */
+        }
+    }
+}
