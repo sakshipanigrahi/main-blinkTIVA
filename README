@@ -1,9 +1,9 @@
-# Lab 2 Reports
+#Lab 2 Report
 
 **Sakshi Panigrahi**
 Electronic Systems Engineering, IISc
 
-## Introduction
+##Introduction
 
 - Implements RGB LED control on the TM4C123GH6PM microcontroller using two push-button switches, SW1 and SW2, connected on Port F.
 - **Program 1** — sets the LED colour instantly based on which switches are pressed.
@@ -59,7 +59,7 @@ Electronic Systems Engineering, IISc
 - The loop counts `i` up to `delayLimit` (= `rates[rateIndex]`) — more counts means longer wait.
 - Switches are checked every loop, so presses are detected promptly, but a press mid-blink only takes effect from the next phase onward.
 
-## Conclusion
+##Conclusion
 
 - Both programs demonstrate core embedded GPIO concepts on the TM4C123GH6PM:
   - Reading active-low switch inputs with pull-up resistors
