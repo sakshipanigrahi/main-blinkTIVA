@@ -47,7 +47,7 @@ int main(void)
 
             GPIO_PORTF_DATA_R = colors[colorIndex];  /* keep color updated live */
 
-            for (j = 0; j < 3180; j++);
+            for (j = 0; j < 1000; j++);
         }
 
         GPIO_PORTF_DATA_R = 0x00; /* LED off */
@@ -74,7 +74,7 @@ int main(void)
             sw1 = GPIO_PORTF_DATA_R & 0x10;
             sw2 = GPIO_PORTF_DATA_R & 0x01;
 
-            for (j = 0; j < 3180; j++);
+            for (j = 0; j < 1000; j++);
         }
     }
 }
